@@ -28,26 +28,27 @@ public class MiniNet {
 	
 	// Array
 	static String _arrMenuOption_Main[]= {
+		"Selected Person: [  ]",
+		"~",
 		"[ 1 ] - List All",
 		"[ 2 ] - Add a Person",
-		"[ 3 ] - Load Data (For Testing Only)",
-		"[ x ] - Select a Person",
+		"[ 3 ] - Select a Person",
 		"[ x ] - Select a Friend",
 		"~",
 		"[ 0 ] - Exit"	
 	};
+	static String _arrMenuOption_SelectPerson[]= {
+			"[ 0    ] - Back to Main"	
+		};
 	static String _arrMenuOption_YesNo[]= {
 			"[ 1 ] - Yes",			
 			"[ 0 ] - No"
 			};
 	
 	// Constants
-	static final String DATAPATH_ADULT = "src/Adult_Test.txt";
-	static final String DATAPATH_DEPENDENT = "src/Dependent_Test.txt";
-	
-	// DELETEME
-	static final String DATAPATH_ADULT_TEST = "src/Adult_Test.txt";
-	static final String DATAPATH_DEPENDENT_TEST = "src/Dependent_Test.txt";
+	static final String DATAPATH_ADULT = "src/Adult.txt";
+	static final String DATAPATH_DEPENDENT = "src/Dependent.txt";
+	static final int MENU_WIDTH = 97;
 	
 // ---------- Data
 	
@@ -108,13 +109,13 @@ public class MiniNet {
 		    	// Choices
 		    	switch (intChoice) {
 		    		case 1:
-		    			displayHashMap();
+		    			listAll();		    			
 		            break;
 		    		case 2:
 		    			addPerson();
 		            break;
 		    		case 3:
-		    			loadFileToHashMap();
+		    			selectPerson();
 		    			break;
 		    		case 0:
 		    			if (isExitApp()) {
@@ -132,6 +133,13 @@ public class MiniNet {
 		    		break;	    		    		 	
 		    	}
 	    }
+	}
+	
+	private static void listAll() {
+		// Display records from HashMap
+		displayHashMap("List of all person", false);
+		// Pause
+	    _mySys.pressAnyKey("Press <Enter> key to go back to Main Menu!");
 	}
 	
 	/**
@@ -154,9 +162,9 @@ public class MiniNet {
 		_myMenu.displayMenuHeader("Add a person");
 		
 		// Data Entry
-		_mySys.printIt("Enter Id: ", false);
-		strId = objScanner.nextLine();
-		_mySys.printIt("Enter Name: ", false);
+		_mySys.printIt("Enter Id (4 Char Exact): ", false);
+		strId = objScanner.nextLine();		
+		_mySys.printIt("Enter Name (15 Char Max): ", false);
 		strName = objScanner.nextLine();
 		strPhoto = strName + ".jpg";
 		_mySys.printIt("Enter Status: ", false);
@@ -188,6 +196,18 @@ public class MiniNet {
 			// Inform the user that the person was added
 			_myMenu.displayMessagePrompt("The person was successfully added!", true);
 		};
+	}
+
+	private static void selectPerson() {
+		// Display records from HashMap
+		displayHashMap("Select a person from the list", true);
+		// Display Options
+		_myMenu.displayMenuOptions(_arrMenuOption_SelectPerson, MENU_WIDTH);
+		_myMenu.displaySeparator(MENU_WIDTH);
+ 		_mySys.printIt("Type the Person Id of your choice and press <Enter>: ", false);
+ 		
+ 		// Pause
+	    _mySys.pressAnyKey("Press <Enter> key to go back to Main Menu!");
 	}
 	
 	/**
@@ -291,43 +311,6 @@ public class MiniNet {
 	/**
 	 * Load Data from Hashmap to Text File 
 	 */
-	private static void loadHashMapToFile_Old() {
-		
-		String strDelimitedAdult = "";
-		String strDelimitedDependent = "";
-		
-		// Iterate thru HashMap
-		for (Map.Entry<String, Person> entry : _mapPerson.entrySet()) {
-			Person obj = entry.getValue();
-		    
-			// Store Data to Delimited String
-			if (obj.getAge() >= 16) {
-				strDelimitedAdult +=
-					(strDelimitedAdult == "" ? "" : "\n") +
-					obj.getId().trim() + ", " +
-	    				obj.getName().trim() + ", " +
-	    				obj.getPhoto().trim() + ", " +
-	    				obj.getStatus().trim() + ", " +
-	    				Integer.toString(obj.getAge()).trim();
-			} else {
-				strDelimitedDependent += 
-					(strDelimitedDependent == "" ? "" : "\n") +
-					obj.getId().trim() + ", " +
-	    				obj.getName().trim() + ", " +
-	    				obj.getPhoto().trim() + ", " +
-	    				obj.getStatus().trim() + ", " +
-	    				Integer.toString(obj.getAge()).trim();
-			}
-		}
-		
-		// Write to File
-		_mySys.writeDataToFile(strDelimitedAdult, DATAPATH_ADULT_TEST);
-		_mySys.writeDataToFile(strDelimitedDependent, DATAPATH_DEPENDENT_TEST);
-	}
-	
-	/**
-	 * Load Data from Hashmap to Text File 
-	 */
 	private static void loadHashMapToFile() {
 		
 		String strDelimitedAdult = "";
@@ -388,32 +371,31 @@ public class MiniNet {
 	    }
 		
 		// Write to File
-		_mySys.writeDataToFile(strDelimitedAdult, DATAPATH_ADULT_TEST);
-		_mySys.writeDataToFile(strDelimitedDependent, DATAPATH_DEPENDENT_TEST);
+		_mySys.writeDataToFile(strDelimitedAdult, DATAPATH_ADULT);
+		_mySys.writeDataToFile(strDelimitedDependent, DATAPATH_DEPENDENT);
 	}
 	
 	/**
 	 * Display records from a HashMap
 	 */
-	private static void displayHashMap() {
+	private static void displayHashMap(String strHeader, boolean blnAsMenuOption) {
 		
-		// Display Column Header
-		int intWidthLenght = 97;
+		// Display Column Header		
 		_myMenu.clearScreen();
-		_myMenu.displaySeparator(intWidthLenght);
-		_mySys.printIt("| " + _myStr.padRight("List of all person",intWidthLenght-4) + " |");
-		_myMenu.displaySeparator(intWidthLenght);
+		_myMenu.displaySeparator(MENU_WIDTH);
+		_mySys.printIt("| " + _myStr.padRight(strHeader,MENU_WIDTH-4) + " |");
+		_myMenu.displaySeparator(MENU_WIDTH);
 		_mySys.printIt(
 				"| " + 
-				_myStr.padRight("Id",4) + "  " +
+				_myStr.padRight("Id",8) + "  " +
 				_myStr.padRight("Name",15) + "  " +
 				_myStr.padRight("Photo",20) + "  " +
-				_myStr.padRight("Status",30) + "  " +
+				_myStr.padRight("Status",26) + "  " +
 				_myStr.padRight("Age",3) + "  " +
 				_myStr.padRight("Type",10) + 
 				"  |"
 				);
-		_myMenu.displaySeparator(intWidthLenght);
+		_myMenu.displaySeparator(MENU_WIDTH);
 		
 		// Display the Hashmap (Sorted)
 	    Collection<Person> Person = _mapPerson.values();
@@ -429,26 +411,25 @@ public class MiniNet {
 	    			strType = "Adult";
 			}; 
 			
-			// Display the Data
+			// Display the Data			
 	    		_mySys.printIt(
 	    				"| " + 
-	    				_myStr.padRight(p.getId(),4) + "  " +
+ 					(blnAsMenuOption == true ? "[ " : "") +		
+	    				_myStr.padRight( p.getId(),4) + 
+	    				(blnAsMenuOption == true ? " ]  " : "      ") +
+	    				
 	    				_myStr.padRight(p.getName(),15) + "  " +
 	    				_myStr.padRight(p.getPhoto(),20) + "  " +
-	    				_myStr.padRight(p.getStatus(),30) + "  " +
+	    				_myStr.padRight(p.getStatus(),26) + "  " +
 	    				_myStr.padRight(Integer.toString(p.getAge()),3) + "  " +
 	    				_myStr.padRight(strType,10) + 
 	    				"  |"
 	    				);
 	    }
-	    _myMenu.displaySeparator(intWidthLenght);
-	    
-	    // Pause
-	    _mySys.pressAnyKey("Press <Enter> key to go back to Main Menu!");
+	    _myMenu.displaySeparator(MENU_WIDTH);
 	    
 	}
-	
-	
+
 	/**
 	 * Confirm to save the person to text file
 	 */

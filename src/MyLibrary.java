@@ -135,7 +135,7 @@ public class MyLibrary {
 	 class MyMenu {
 		 
 		 // Constants
-		 final int _intMENU_WIDTH = 55;				// Menu Width
+		 final int MENU_WIDTH = 55;				// Menu Width
 		 
 		 /**
 		 * Displays a simple MenuBox with a Title and Options
@@ -162,7 +162,7 @@ public class MyLibrary {
 			
 	 		clearScreen();
 	 		displayMenuHeader(strMenuTitle);
-	 		displayMenuOptions(arrMenuOptions);
+	 		displayMenuOptions(arrMenuOptions, MENU_WIDTH);
 	 		displaySeparator();
 	 		_objMySys.printIt("Type the code of your choice and press <Enter>: ", false);
 		}	
@@ -177,7 +177,7 @@ public class MyLibrary {
 		void displayMenuPrompt(String strMenuTitle, String arrMenuOptions[]) {
 			clearScreen();
 			displayMenuHeader(strMenuTitle);
-			displayMenuOptions(arrMenuOptions);
+			displayMenuOptions(arrMenuOptions, MENU_WIDTH);
 			displaySeparator();
 			
 			// Display press <Enter> to continue
@@ -190,7 +190,7 @@ public class MyLibrary {
 		void displayMenuTitle() {
 			clearScreen();
 			displaySeparator();
-			_objMySys.printIt("|" + _objMyStr.padCenter("** MiniNet Menu **", _intMENU_WIDTH-2) + "|");
+			_objMySys.printIt("|" + _objMyStr.padCenter("** MiniNet Menu **", MENU_WIDTH-2) + "|");
 			displaySeparator("~");			
 		}
 		
@@ -201,7 +201,7 @@ public class MyLibrary {
 		 */
 		void displayMenuHeader(String strMenuTitle) {
 			displayMenuTitle();
-			_objMySys.printIt("|" + _objMyStr.padRight(" " + strMenuTitle, _intMENU_WIDTH-2) + "|");
+			_objMySys.printIt("|" + _objMyStr.padRight(" " + strMenuTitle, MENU_WIDTH-2) + "|");
 			displaySeparator();
 		}
 		
@@ -210,14 +210,14 @@ public class MyLibrary {
 		 * 
 		 * @param arrOptionsValue
 		 */
-		void displayMenuOptions(String arrOptionsValue[]) {
+		void displayMenuOptions(String arrOptionsValue[], int intWidthLenght) {
 			for (int i = 0; i < arrOptionsValue.length; i++) {
 				String value = arrOptionsValue[i];
 				String tilde = "~";
 				if ( value.equals(tilde)) {
 					displaySeparator();
 				} else {
-					_objMySys.printIt("| " + _objMyStr.padRight(value, _intMENU_WIDTH-4) + " |");	
+					_objMySys.printIt("| " + _objMyStr.padRight(value, intWidthLenght-4) + " |");	
 				}	
 			}
 		}
@@ -226,7 +226,7 @@ public class MyLibrary {
 		 * Displays Menu Window Separator
 		 */
 		void displaySeparator() {
-			_objMySys.printIt("+" + _objMyStr.strReplicate("-", _intMENU_WIDTH-2) + "+");
+			_objMySys.printIt("+" + _objMyStr.strReplicate("-", MENU_WIDTH-2) + "+");
 		 }
 				
 		/**
@@ -244,7 +244,7 @@ public class MyLibrary {
 		 * @param strStringToReplicate
 		 */
 		void displaySeparator(String strStringToReplicate) {
-			_objMySys.printIt("+" + _objMyStr.strReplicate(strStringToReplicate, _intMENU_WIDTH-2) + "+");
+			_objMySys.printIt("+" + _objMyStr.strReplicate(strStringToReplicate, MENU_WIDTH-2) + "+");
 		 }
 		 
 		/**
@@ -258,7 +258,7 @@ public class MyLibrary {
 					clearScreen();
 				}
 				displaySeparator();
-				_objMySys.printIt("|" + _objMyStr.padCenter(strMessage, _intMENU_WIDTH-2) + "|");
+				_objMySys.printIt("|" + _objMyStr.padCenter(strMessage, MENU_WIDTH-2) + "|");
 				displaySeparator();
 		}
 		
