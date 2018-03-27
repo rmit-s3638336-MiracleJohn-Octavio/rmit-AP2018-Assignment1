@@ -1,0 +1,4 @@
+X001, Mark, Mark.jpg, Working at KFC, 27
+X002, Elise, Elise.jpg, Working at McDonald, 24
+X003, Andrew, Andrew.jpg, Looking for jobs, 26   
+X004, Mariah, Mariah.jpg, Student at RMIT, 23

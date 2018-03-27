@@ -1,0 +1,16 @@
+- put try catch or create an error trap on 
+  main menu when user input a string on
+  the integer input
+  
+  
+  
+  	String strFN = _objMySys.getStringInput("Please enter First Name: ");
+		    	String strLN = _objMySys.getStringInput("Please enter Last Name: ");
+		    	
+		    	if (strFN.trim().isEmpty()) {
+	    			_objMyMenu.displayMessagePrompt("You must specifiy First Name!");
+			} else if (strLN.trim().isEmpty()) {
+				_objMyMenu.displayMessagePrompt("You must specifiy Last Name!");
+			}		    	
+		    	
+		    	System.out.println("You have entered: " + strFN + " " + strLN);
