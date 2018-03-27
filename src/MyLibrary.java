@@ -23,14 +23,6 @@ public class MyLibrary {
 	private MyNumeric _objMyNum = new MyNumeric();
 	private MyMenu _objMyMenu = new MyMenu();
 	 
-	 // FIXME
-	// Enums
-	 enum _enmTest {
-		Test1,
-		Test2,
-		Test3;
-	}
-
 	 class MySystem {
 		 
 		 void printIt(String strValue) {
@@ -68,32 +60,28 @@ public class MyLibrary {
 		 /**
 		 * Write String to File
 		 * 
-		 * @param strDelimitedString Delimited string separated by carriage return ('/n')
+		 * @param strStringValue Delimited string separated by carriage return ('/n')
 		 * @param strFileName <Folder (If any)> + Filename
 		 * 
 		 * @Usage
 		 * 
-		 * String strDelimited =
-		 * 		"P001, Mark, Mark.jpg, Working at KFC, 27\n" +
-		 * 		"P002, Elise, Elise.jpg, Working at McDonald, 24\n" +
-		 * 		"P003, Andrew, Andrew.jpg, Looking for jobs, 26   \n" +
-		 * 		"P004, Mariah, Mariah.jpg, Student at RMIT, 23";
+		 * strDelimitedAdult +=
+		 * 		(strDelimitedAdult == "" ? "" : "\n") +
+		 * 		obj.getId().trim() + ", " +
+		 * 		obj.getName().trim() + ", " +
+		 * 		obj.getPhoto().trim() + ", " +
+		 * 		obj.getStatus().trim() + ", " +
+		 * 		Integer.toString(obj.getAge()).trim();
 		 *  
-		 * _objMySys.writeDataToFile(strDelimited, "src/myData.txt");
+		 * _objMySys.writeDataToFile(strDelimitedAdult, "src/myData.txt");
 		 *  
 		 */
-		void writeDataToFile(String strDelimitedString, String strFileName) {
-			String arrDelimitedString[] = {};
-			arrDelimitedString = strDelimitedString.split("/n", -1);
-			
+		void writeDataToFile(String strStringValue, String strFileName) {
+
 			try {
 				FileWriter fw = new FileWriter(strFileName);
 				PrintWriter pw = new PrintWriter(fw);
-				
-				for (int i = 0; i < arrDelimitedString.length; i++) {
-					pw.println(arrDelimitedString[0]);								
-				}
-				
+				pw.print(strStringValue);
 				pw.close();
 			} catch (IOException e) {
 				_objMyMenu.displayMessagePrompt("Error has occured on method 'writeDataToFile'" + e.toString(), true);

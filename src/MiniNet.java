@@ -41,6 +41,14 @@ public class MiniNet {
 			"[ 0 ] - No"
 			};
 	
+	// Constants
+	static final String DATAPATH_ADULT = "src/Adult_Test.txt";
+	static final String DATAPATH_DEPENDENT = "src/Dependent_Test.txt";
+	
+	// DELETEME
+	static final String DATAPATH_ADULT_TEST = "src/Adult_Test.txt";
+	static final String DATAPATH_DEPENDENT_TEST = "src/Dependent_Test.txt";
+	
 // ---------- Data
 	
 	/*
@@ -86,7 +94,7 @@ public class MiniNet {
 	    int intChoice;
 	    boolean blnIsExitLoop;
 	    
-	    // Load Data from File
+	    // Load File to HashMap
 	    loadFileToHashMap();
 	    
 	    //Begin Infinite Loop
@@ -127,66 +135,8 @@ public class MiniNet {
 	}
 	
 	/**
-	 * List of all person in the network
+	 * Add a person in the Network 
 	 */
-	private static void listAll() {
-		
-		// Load string data from text file
-		String strData =  _mySys.readDataFromFile("src/temp.txt");
-		// Convert string data into array data
-		String arrData[] = new String[strData.split("\n").length];		
-		arrData = strData.split("\n");
-
-		// Display Column Header
-		int intWidthLenght = 85;
-		_myMenu.clearScreen();
-		_myMenu.displaySeparator(intWidthLenght);
-		_mySys.printIt("| " + _myStr.padRight("List of all person",intWidthLenght-4) + " |");
-		_myMenu.displaySeparator(intWidthLenght);
-		_mySys.printIt(
-				"| " + 
-				_myStr.padRight("Id",4) + "  " +
-				_myStr.padRight("Name",15) + "  " +
-				_myStr.padRight("Photo",20) + "  " +
-				_myStr.padRight("Status",30) + "  " +
-				_myStr.padRight("Age",3) + 
-				"  |"
-				);
-		_myMenu.displaySeparator(85);
-		
-		// Iterate the array data
-		for (String strLine : arrData) {
-			
-			// Convert line string into array to get field values			
-			String arrLine[] = new String[5];
-			arrLine = strLine.split(",");
-			
-			for (int i = 0; i < arrLine.length; i++) {
-				switch (i) {
-					case 0: // Id						
-						_mySys.printIt("  " + _myStr.padRight(arrLine[i].trim(),4) + "  ", false);
-						break;
-					case 1: // Name
-						_mySys.printIt(_myStr.padRight(arrLine[i].trim(),15) + "  ", false);
-						break;
-					case 2: // Photo Filename
-						_mySys.printIt(_myStr.padRight(arrLine[i].trim(),20) + "  ", false);
-						break;
-					case 3: // Status
-						_mySys.printIt(_myStr.padRight(arrLine[i].trim(),30) + "  ", false);
-						break;
-					case 4: // Age
-						_mySys.printIt(_myStr.padRight(arrLine[i].trim(),3) + "  ");
-						break;
-				}
-			}
-		}
-		
-		_myMenu.displaySeparator(intWidthLenght);
-		_mySys.pressAnyKey();
-		
-	}
-
 	private static void addPerson() {
 		
 		// Local Variables
@@ -232,33 +182,8 @@ public class MiniNet {
 				_mapPerson.put(strId, new Dependent(strId, strName, strPhoto, strStatus, intAge));	
 			}
 			
-			
-			// FIXME Just a sample for HashMap Iteration
-			// Iterate thru HashMap
-			for (Map.Entry<String, Person> entry : _mapPerson.entrySet()) {
-				Person obj = entry.getValue();
-			    
-				// Check the instance if Adult or Child
-		    		strType = "Dependent";
-		    		if (obj instanceof Adult) {
-		    			strType = "Adult";
-				}; 
-				
-				// Display the Data
-	    			_mySys.printIt(
-	    				"| " + 
-	    				_myStr.padRight(obj.getId(),4) + "  " +
-	    				_myStr.padRight(obj.getName(),15) + "  " +
-	    				_myStr.padRight(obj.getPhoto(),20) + "  " +
-	    				_myStr.padRight(obj.getStatus(),30) + "  " +
-	    				_myStr.padRight(Integer.toString(obj.getAge()),3) + "  " +
-	    				_myStr.padRight(strType,10) + 
-	    				"  |"
-	    				);
-			}
-			
 			// Update the Text File
-//			readDataFromFile()
+			loadHashMapToFile();
 			
 			// Inform the user that the person was added
 			_myMenu.displayMessagePrompt("The person was successfully added!", true);
@@ -320,7 +245,7 @@ public class MiniNet {
 		try {
 			
 			// Read the file (Must be enclosed with try catch)
-			objScanner = new Scanner(new FileReader("src/Adult.txt"));
+			objScanner = new Scanner(new FileReader(DATAPATH_ADULT));
 
 			// Read the lines from Text File
 		    while (objScanner.hasNextLine()) {
@@ -338,8 +263,8 @@ public class MiniNet {
 		        _mapPerson.put(strId, new Adult(strId, strName, strPhoto, strStatus, intAge));
 		    }
 		    
-		 // Read the file (Must be enclosed with try catch)
- 			objScanner = new Scanner(new FileReader("src/Dependent.txt"));
+		    // Read the file (Must be enclosed with try catch)
+ 			objScanner = new Scanner(new FileReader(DATAPATH_DEPENDENT));
 
  			// Read the lines from Text File
  		    while (objScanner.hasNextLine()) {
@@ -356,15 +281,115 @@ public class MiniNet {
  		        // Put Data to Hashmap
  		        _mapPerson.put(strId, new Dependent(strId, strName, strPhoto, strStatus, intAge));
  		    }
-		    
+ 		    
 		} catch (FileNotFoundException e) {
 			// TODO Auto-generated catch block
 			e.printStackTrace();
 		}
 	}
 	
+	/**
+	 * Load Data from Hashmap to Text File 
+	 */
+	private static void loadHashMapToFile_Old() {
+		
+		String strDelimitedAdult = "";
+		String strDelimitedDependent = "";
+		
+		// Iterate thru HashMap
+		for (Map.Entry<String, Person> entry : _mapPerson.entrySet()) {
+			Person obj = entry.getValue();
+		    
+			// Store Data to Delimited String
+			if (obj.getAge() >= 16) {
+				strDelimitedAdult +=
+					(strDelimitedAdult == "" ? "" : "\n") +
+					obj.getId().trim() + ", " +
+	    				obj.getName().trim() + ", " +
+	    				obj.getPhoto().trim() + ", " +
+	    				obj.getStatus().trim() + ", " +
+	    				Integer.toString(obj.getAge()).trim();
+			} else {
+				strDelimitedDependent += 
+					(strDelimitedDependent == "" ? "" : "\n") +
+					obj.getId().trim() + ", " +
+	    				obj.getName().trim() + ", " +
+	    				obj.getPhoto().trim() + ", " +
+	    				obj.getStatus().trim() + ", " +
+	    				Integer.toString(obj.getAge()).trim();
+			}
+		}
+		
+		// Write to File
+		_mySys.writeDataToFile(strDelimitedAdult, DATAPATH_ADULT_TEST);
+		_mySys.writeDataToFile(strDelimitedDependent, DATAPATH_DEPENDENT_TEST);
+	}
+	
+	/**
+	 * Load Data from Hashmap to Text File 
+	 */
 	private static void loadHashMapToFile() {
+		
+		String strDelimitedAdult = "";
+		String strDelimitedDependent = "";
+		
+		// Iterate thru HashMap
+		for (Map.Entry<String, Person> entry : _mapPerson.entrySet()) {
+			Person obj = entry.getValue();
+		    
+			// Store Data to Delimited String
+			if (obj.getAge() >= 16) {
+				strDelimitedAdult +=
+					(strDelimitedAdult == "" ? "" : "\n") +
+					obj.getId().trim() + ", " +
+	    				obj.getName().trim() + ", " +
+	    				obj.getPhoto().trim() + ", " +
+	    				obj.getStatus().trim() + ", " +
+	    				Integer.toString(obj.getAge()).trim();
+			} else {
+				strDelimitedDependent += 
+					(strDelimitedDependent == "" ? "" : "\n") +
+					obj.getId().trim() + ", " +
+	    				obj.getName().trim() + ", " +
+	    				obj.getPhoto().trim() + ", " +
+	    				obj.getStatus().trim() + ", " +
+	    				Integer.toString(obj.getAge()).trim();
+			}
+		}
+		
+		// ---
+		
+		// Display the Hashmap (Sorted)
+	    Collection<Person> Person = _mapPerson.values();
+	    List<Person> list = new ArrayList<>(Person);
+	    Collections.sort(list, new comparatorPersonName());
 
+	    for (Iterator<Person> it = list.iterator(); it.hasNext();) {
+	    		Person p = (Person) it.next();
+	    		
+	    		// Store Data to Delimited String
+			if (p.getAge() >= 16) {
+				strDelimitedAdult +=
+					(strDelimitedAdult == "" ? "" : "\n") +
+					p.getId().trim() + ", " +
+	    				p.getName().trim() + ", " +
+	    				p.getPhoto().trim() + ", " +
+	    				p.getStatus().trim() + ", " +
+	    				Integer.toString(p.getAge()).trim();
+			} else {
+				strDelimitedDependent += 
+					(strDelimitedDependent == "" ? "" : "\n") +
+					p.getId().trim() + ", " +
+	    				p.getName().trim() + ", " +
+	    				p.getPhoto().trim() + ", " +
+	    				p.getStatus().trim() + ", " +
+	    				Integer.toString(p.getAge()).trim();
+			}
+	    }
+		
+		// Write to File
+		_mySys.writeDataToFile(strDelimitedAdult, DATAPATH_ADULT_TEST);
+		_mySys.writeDataToFile(strDelimitedDependent, DATAPATH_DEPENDENT_TEST);
 	}
 	
 	/**
@@ -422,6 +447,7 @@ public class MiniNet {
 	    _mySys.pressAnyKey("Press <Enter> key to go back to Main Menu!");
 	    
 	}
+	
 	
 	/**
 	 * Confirm to save the person to text file
