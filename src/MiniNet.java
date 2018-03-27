@@ -25,6 +25,7 @@ public class MiniNet {
 	private static MyLibrary.MyString _myStr = _myLib.new MyString();
 	
 	private static Map<String, Person> _mapPerson = new HashMap<>();
+	private static Person _objSelectedPerson;
 	
 	// Array
 	static String _arrMenuOption_Main[]= {
@@ -38,7 +39,7 @@ public class MiniNet {
 		"[ 0 ] - Exit"	
 	};
 	static String _arrMenuOption_SelectPerson[]= {
-			"[ 0    ] - Back to Main"	
+			"[ 0 ] - Back to Main"	
 		};
 	static String _arrMenuOption_YesNo[]= {
 			"[ 1 ] - Yes",			
@@ -103,7 +104,23 @@ public class MiniNet {
 		    	// Reset 
 		    	blnIsExitLoop  = false;	
 		    			    	
-		    	// Display the Main Menu	 
+		    	// Display the Main Menu
+		    	String strSelectedPerson = ""; 
+		    	if (_objSelectedPerson != null) {
+		    		strSelectedPerson = _objSelectedPerson.getId() + " - " + _objSelectedPerson.getName(); 
+			}
+		    	
+		    	String arrMenuOption_Main[] = {
+		    		"Selected Person: [ " + strSelectedPerson + " ]",
+		    		"~",
+		    		"[ 1 ] - List All",
+		    		"[ 2 ] - Add a Person",
+		    		"[ 3 ] - Select a Person",
+		    		"[ x ] - Select a Friend",
+		    		"~",
+		    		"[ 0 ] - Exit"	
+		    	};
+		    	_arrMenuOption_Main = arrMenuOption_Main;
 		    	intChoice = _myMenu.getMenuInput("Select option to execute..", _arrMenuOption_Main);
 		    	
 		    	// Choices
@@ -199,15 +216,21 @@ public class MiniNet {
 	}
 
 	private static void selectPerson() {
+		
+		// Local Variables
+		Scanner objScanner = new Scanner(System.in);
+		String strUserInput
+		
 		// Display records from HashMap
 		displayHashMap("Select a person from the list", true);
 		// Display Options
 		_myMenu.displayMenuOptions(_arrMenuOption_SelectPerson, MENU_WIDTH);
 		_myMenu.displaySeparator(MENU_WIDTH);
- 		_mySys.printIt("Type the Person Id of your choice and press <Enter>: ", false);
  		
- 		// Pause
-	    _mySys.pressAnyKey("Press <Enter> key to go back to Main Menu!");
+ 		// Get User Input
+		_mySys.printIt("Type the Person Id of your choice and press <Enter>: ", false);
+		strId = objScanner.nextLine();		
+ 		
 	}
 	
 	/**

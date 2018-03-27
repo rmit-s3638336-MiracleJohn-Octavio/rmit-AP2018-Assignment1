@@ -3,6 +3,7 @@ XYZ, Maricar, Maricar.jpg, Blah Blah, 26
 A003, Andrew, Andrew.jpg, Looking for jobs, 26
 A004, Mariah, Mariah.jpg, Student at RMIT, 23
 A001, Mark, Mark.jpg, Working at KFC, 27
+AAA1, Michael Jordan, Michael Jordan.jpg, Basketball Player, 34
 A002, Elise, Elise.jpg, Working at McDonald, 24
 A003, Andrew, Andrew.jpg, Looking for jobs, 26
 A002, Elise, Elise.jpg, Working at McDonald, 24
@@ -10,3 +11,4 @@ SDSD, MJ, MJ.jpg, Beep, 22
 A004, Mariah, Mariah.jpg, Student at RMIT, 23
 XYZ, Maricar, Maricar.jpg, Blah Blah, 26
 A001, Mark, Mark.jpg, Working at KFC, 27
+AAA1, Michael Jordan, Michael Jordan.jpg, Basketball Player, 34
