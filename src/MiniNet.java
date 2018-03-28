@@ -110,13 +110,16 @@ public class MiniNet {
 		    		"[ 1 ] - List all person",
 		    		"[ 2 ] - Add a person",
 		    		"[ 3 ] - Select a person",
-		    		"[ 4 ] - Display  profile",
-		    		"[ 5 ] - Delete selected person",
+		    		"[ 4 ] - Display profile",
+		    		"[ 5 ] - Update profile",
+		    		"[ 6 ] - Delete selected person",
 		    		"~",
 		    		"[ 0 ] - Exit"	
 		    	};
 		    	_arrMenuOption_Main = arrMenuOption_Main;
 		    	intChoice = _myMenu.getMenuInput("Select option to execute..", _arrMenuOption_Main);
+		    	
+		    	//updateProfile
 		    	
 		    	// Choices
 		    	switch (intChoice) {
@@ -133,6 +136,9 @@ public class MiniNet {
 		    			displayProfile();
 		    			break;
 		    		case 5:
+		    			updateProfile();
+		    			break;
+		    		case 6:
 		    			deleteSelectedPerson();
 		    			break;
 		    		case 0:
@@ -193,7 +199,13 @@ public class MiniNet {
 			_mySys.printIt("Enter Age: ", false);		
 			if (objScanner.hasNextInt()) {
 				intAge = objScanner.nextInt();
-				break;
+				
+				// Validate
+				if (intAge < 1) {
+					_myMenu.displayMessagePrompt("Please enter value greater than 0!", false);	
+				} else {
+					break;	
+				}
 			} else {
 				objScanner.nextLine();
 				_myMenu.displayMessagePrompt("Please enter numeric value!", false);
@@ -241,14 +253,14 @@ public class MiniNet {
 		if (strUserInput == "0") {
 			// Do nothing.. Just Exit this method
 		} else {
-			// Locate the person from and list and put it on 
+			// Locate the person from the list and put it on 
 			// the variable '_objSelectedPerson'
 			_objSelectedPerson = getPersonDetails(strUserInput);
 		}
 	}
 	
 	/**
-	 * Display the profile of the Person Selected
+	 * Display the profile of the person selected
 	 */
 	private static void displayProfile() {
 		
@@ -277,7 +289,7 @@ public class MiniNet {
 		    	
 		    	// Display the Profile
 		    _myMenu.clearScreen();
-		    _myMenu.displayMenuHeader("Profile");
+		    _myMenu.displayMenuHeader("Profile Information");
 		    _myMenu.displayMenuOptions(arrMenuOption, MENU_WIDTH_SMALL);
 		    _myMenu.displaySeparator();
 		    	
@@ -287,6 +299,126 @@ public class MiniNet {
 		
 	}
 	
+	/**
+	 * Update the profile information of the person selected
+	 */
+	private static void updateProfile() {
+
+		// Local Variables
+		String arrMenuOption[];
+		
+		@SuppressWarnings("resource")
+		Scanner objScanner = new Scanner(System.in);
+		
+		// -- For Data Entry 
+		String strId;
+		String strName;
+		String strPhoto;
+		String strStatus;
+		int intAge;
+		
+		// -- For Storing Original Value 
+		String strId_Orig;
+		String strName_Orig;
+		String strPhoto_Orig;
+		String strStatus_Orig;
+		int intAge_Orig;
+
+
+// --- Display current value
+		
+		// Validation
+		if (_objSelectedPerson == null) {
+			_myMenu.displayMessagePrompt("You need to select a person first!", true);
+		} else {
+			
+			// Get the ID
+			strId = _objSelectedPerson.getId();
+			
+			// Get the original value
+			strId_Orig = _objSelectedPerson.getId();
+			strName_Orig = _objSelectedPerson.getName();
+			strPhoto_Orig = _objSelectedPerson.getPhoto();
+			strStatus_Orig = _objSelectedPerson.getStatus();
+			intAge_Orig = _objSelectedPerson.getAge();
+						
+			arrMenuOption = 
+				(
+		    		"Id:     " + _objSelectedPerson.getId() + " (Read Only)," + 
+		    		"Name:   " + _objSelectedPerson.getName()+ "," +
+		    		"Photo:  " + _objSelectedPerson.getPhoto() + "," +
+		    		"Status: " + _objSelectedPerson.getStatus() + "," +
+		    		"Age:    " + _objSelectedPerson.getAge()  + "," +
+		    		"~" + "," +
+		    		"Enter new value to change or leave it blank to " + "," +
+		    		"remain as is."
+		    		).split(",");
+		    	
+		    	// Display the Profile
+		    _myMenu.clearScreen();
+		    _myMenu.displayMenuHeader("Current Profile Information");
+		    _myMenu.displayMenuOptions(arrMenuOption, MENU_WIDTH_SMALL);
+		    _myMenu.displaySeparator();
+		    
+// --- Data Entry
+		    		    		
+			_mySys.printIt("Enter Name (15 Char Max): ", false);
+			strName = objScanner.nextLine();
+			strPhoto = strName + ".jpg";
+			_mySys.printIt("Enter Status: ", false);
+			strStatus = objScanner.nextLine();
+			while (true) {
+				_mySys.printIt("Enter Age: ", false);		
+				if (objScanner.hasNextInt()) {
+					intAge = objScanner.nextInt();
+					
+					// Validate
+					if (intAge < 1) {
+						_myMenu.displayMessagePrompt("Please enter value greater than 0!", false);	
+					} else {
+						break;	
+					}
+				} else {
+					objScanner.nextLine();
+					_myMenu.displayMessagePrompt("Please enter numeric value!", false);
+				}
+			}
+			
+			// Confirmation to Save
+			if (isSavePerson()) {
+				
+				// Check if value is empty
+				if (strName.equals("")) {
+					strName = strName_Orig;		
+					strPhoto = strName + ".jpg";
+				}
+				if (strStatus.equals("")) {
+					strStatus = strStatus_Orig;
+				}
+				
+				// Put Data to Hashmap
+				if (intAge >= 16) {
+					_mapPerson.put(strId, new Adult(strId, strName, strPhoto, strStatus, intAge)); 
+				} else {
+					_mapPerson.put(strId, new Dependent(strId, strName, strPhoto, strStatus, intAge));	
+				}
+				
+				// Update the Text File
+				loadHashMapToFile();
+				
+				// Locate the person from the list and put it on 
+				// the variable '_objSelectedPerson'
+				_objSelectedPerson = getPersonDetails(strId);
+				
+				// Inform the user that the person was added
+				_myMenu.displayMessagePrompt("The profile was successfully updated!", true);
+			};
+		}
+	}
+	
+	/**
+	 * Delete selected person -- including the data from text file 
+	 */
 	private static void deleteSelectedPerson() {
 		
 		// Validation
