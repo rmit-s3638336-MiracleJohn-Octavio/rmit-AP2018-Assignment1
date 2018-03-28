@@ -57,6 +57,7 @@ public class MiniNet {
 	// Constants
 	static final String DATAPATH_ADULT = "src/Adult.txt";
 	static final String DATAPATH_DEPENDENT = "src/Dependent.txt";
+	static final String DATAPATH_FRIEND = "src/Friend.txt";
 	static final int MENU_WIDTH_BIG = 97;
 	static final int MENU_WIDTH_SMALL = 55;
 	
@@ -160,6 +161,10 @@ public class MiniNet {
 		    			break;
 		    		case 6:
 		    			deleteSelectedPerson();
+		    			break;
+		    		case 7:		    			
+		    			break;
+		    		case 8:		    			
 		    			break;
 		    		case 0:
 		    			if (isExitCofirmed()) {
@@ -288,40 +293,40 @@ public class MiniNet {
 		String arrMenuOption[];
 		
 		// Validation
-		if (_objSelectedPerson == null) {
-			_myMenu.displayMessagePrompt("You need to select a person first!", true);
+		if (!isPersonSelected()) { return; }
+		
+		// Process
+		if (_objSelectedPerson != null) {
+	    		arrMenuOption = (
+		    		"Id:     " + _objSelectedPerson.getId() + "," + 
+		    		"Name:   " + _objSelectedPerson.getName()+ "," +
+		    		"Photo:  " + _objSelectedPerson.getPhoto() + "," +
+		    		"Status: " + _objSelectedPerson.getStatus() + "," +
+		    		"Age:    " + _objSelectedPerson.getAge()).split(",");
 		} else {
-			if (_objSelectedPerson != null) {
-		    		arrMenuOption = (
-			    		"Id:     " + _objSelectedPerson.getId() + "," + 
-			    		"Name:   " + _objSelectedPerson.getName()+ "," +
-			    		"Photo:  " + _objSelectedPerson.getPhoto() + "," +
-			    		"Status: " + _objSelectedPerson.getStatus() + "," +
-			    		"Age:    " + _objSelectedPerson.getAge()).split(",");
-			} else {
-				arrMenuOption = (
-			    		"Id:     ," + 
-			    		"Name:   ," +
-			    		"Photo:  ," +
-			    		"Status: ," +
-			    		"Age:    ").split(",");
-			}
-		    	
-		    	// Display the Profile
-		    _myMenu.clearScreen();
-		    _myMenu.displayMenuHeader("Profile Information");
-		    _myMenu.displayMenuOptions(arrMenuOption, MENU_WIDTH_SMALL);
-		    _myMenu.displaySeparator();
-		    	
-		    	// Pause
-		    _mySys.pressAnyKey("Press <Enter> key to go back to Main Menu!");
+			arrMenuOption = (
+		    		"Id:     ," + 
+		    		"Name:   ," +
+		    		"Photo:  ," +
+		    		"Status: ," +
+		    		"Age:    ").split(",");
 		}
+	    	
+	    	// Display the Profile
+	    _myMenu.clearScreen();
+	    _myMenu.displayMenuHeader("Profile Information");
+	    _myMenu.displayMenuOptions(arrMenuOption, MENU_WIDTH_SMALL);
+	    _myMenu.displaySeparator();
+	    	
+	    	// Pause
+	    _mySys.pressAnyKey("Press <Enter> key to go back to Main Menu!");
 		
 	}
 	
 	/**
 	 * Update the profile information of the person selected
 	 */
+	@SuppressWarnings("unused")
 	private static void updateProfile() {
 
 		// Local Variables
@@ -348,92 +353,90 @@ public class MiniNet {
 // --- Display current value
 		
 		// Validation
-		if (_objSelectedPerson == null) {
-			_myMenu.displayMessagePrompt("You need to select a person first!", true);
-		} else {
-			
-			// Get the ID
-			strId = _objSelectedPerson.getId();
-			
-			// Get the original value
-			strId_Orig = _objSelectedPerson.getId();
-			strName_Orig = _objSelectedPerson.getName();
-			strPhoto_Orig = _objSelectedPerson.getPhoto();
-			strStatus_Orig = _objSelectedPerson.getStatus();
-			intAge_Orig = _objSelectedPerson.getAge();
-						
-			arrMenuOption = 
-				(
-		    		"Id:     " + _objSelectedPerson.getId() + " (Read Only)," + 
-		    		"Name:   " + _objSelectedPerson.getName()+ "," +
-		    		"Photo:  " + _objSelectedPerson.getPhoto() + "," +
-		    		"Status: " + _objSelectedPerson.getStatus() + "," +
-		    		"Age:    " + _objSelectedPerson.getAge()  + "," +
-		    		"~" + "," +
-		    		"Enter new value to change or leave it blank to " + "," +
-		    		"remain as is."
-		    		).split(",");
-		    	
-		    	// Display the Profile
-		    _myMenu.clearScreen();
-		    _myMenu.displayMenuHeader("Current Profile Information");
-		    _myMenu.displayMenuOptions(arrMenuOption, MENU_WIDTH_SMALL);
-		    _myMenu.displaySeparator();
-		    
-// --- Data Entry
-		    		    		
-			_mySys.printIt("Enter Name (15 Char Max): ", false);
-			strName = objScanner.nextLine();
-			strPhoto = strName + ".jpg";
-			_mySys.printIt("Enter Status: ", false);
-			strStatus = objScanner.nextLine();
-			while (true) {
-				_mySys.printIt("Enter Age: ", false);		
-				if (objScanner.hasNextInt()) {
-					intAge = objScanner.nextInt();
+		if (!isPersonSelected()) { return; }
+		
+		// Process
+		// Get the ID
+		strId = _objSelectedPerson.getId();
+		
+		// Get the original value
+		strId_Orig = _objSelectedPerson.getId();
+		strName_Orig = _objSelectedPerson.getName();
+		strPhoto_Orig = _objSelectedPerson.getPhoto();
+		strStatus_Orig = _objSelectedPerson.getStatus();
+		intAge_Orig = _objSelectedPerson.getAge();
 					
-					// Validate
-					if (intAge < 1) {
-						_myMenu.displayMessagePrompt("Please enter value greater than 0!", false);	
-					} else {
-						break;	
-					}
+		arrMenuOption = 
+			(
+	    		"Id:     " + _objSelectedPerson.getId() + " (Read Only)," + 
+	    		"Name:   " + _objSelectedPerson.getName()+ "," +
+	    		"Photo:  " + _objSelectedPerson.getPhoto() + "," +
+	    		"Status: " + _objSelectedPerson.getStatus() + "," +
+	    		"Age:    " + _objSelectedPerson.getAge()  + "," +
+	    		"~" + "," +
+	    		"Enter new value to change or leave it blank to " + "," +
+	    		"remain as is."
+	    		).split(",");
+	    	
+	    	// Display the Profile
+	    _myMenu.clearScreen();
+	    _myMenu.displayMenuHeader("Current Profile Information");
+	    _myMenu.displayMenuOptions(arrMenuOption, MENU_WIDTH_SMALL);
+	    _myMenu.displaySeparator();
+	    
+// --- Data Entry
+	    		    		
+		_mySys.printIt("Enter Name (15 Char Max): ", false);
+		strName = objScanner.nextLine();
+		strPhoto = strName + ".jpg";
+		_mySys.printIt("Enter Status: ", false);
+		strStatus = objScanner.nextLine();
+		while (true) {
+			_mySys.printIt("Enter Age: ", false);		
+			if (objScanner.hasNextInt()) {
+				intAge = objScanner.nextInt();
+				
+				// Validate
+				if (intAge < 1) {
+					_myMenu.displayMessagePrompt("Please enter value greater than 0!", false);	
 				} else {
-					objScanner.nextLine();
-					_myMenu.displayMessagePrompt("Please enter numeric value!", false);
+					break;	
 				}
+			} else {
+				objScanner.nextLine();
+				_myMenu.displayMessagePrompt("Please enter numeric value!", false);
+			}
+		}
+		
+		// Confirmation to Save
+		if (isSavePerson()) {
+			
+			// Check if value is empty
+			if (strName.equals("")) {
+				strName = strName_Orig;		
+				strPhoto = strName + ".jpg";
+			}
+			if (strStatus.equals("")) {
+				strStatus = strStatus_Orig;
 			}
 			
-			// Confirmation to Save
-			if (isSavePerson()) {
-				
-				// Check if value is empty
-				if (strName.equals("")) {
-					strName = strName_Orig;		
-					strPhoto = strName + ".jpg";
-				}
-				if (strStatus.equals("")) {
-					strStatus = strStatus_Orig;
-				}
-				
-				// Put Data to Hashmap
-				if (intAge >= 16) {
-					_mapPerson.put(strId, new Adult(strId, strName, strPhoto, strStatus, intAge)); 
-				} else {
-					_mapPerson.put(strId, new Dependent(strId, strName, strPhoto, strStatus, intAge));	
-				}
-				
-				// Update the Text File
-				loadHashMapToFile();
-				
-				// Locate the person from the list and put it on 
-				// the variable '_objSelectedPerson'
-				_objSelectedPerson = getPersonDetails(strId);
-				
-				// Inform the user that the person was added
-				_myMenu.displayMessagePrompt("The profile was successfully updated!", true);
-			};
-		}
+			// Put Data to Hashmap
+			if (intAge >= 16) {
+				_mapPerson.put(strId, new Adult(strId, strName, strPhoto, strStatus, intAge)); 
+			} else {
+				_mapPerson.put(strId, new Dependent(strId, strName, strPhoto, strStatus, intAge));	
+			}
+			
+			// Update the Text File
+			loadHashMapToFile();
+			
+			// Locate the person from the list and put it on 
+			// the variable '_objSelectedPerson'
+			_objSelectedPerson = getPersonDetails(strId);
+			
+			// Inform the user that the person was added
+			_myMenu.displayMessagePrompt("The profile was successfully updated!", true);
+		};
 	}
 	
 	/**
@@ -442,33 +445,74 @@ public class MiniNet {
 	private static void deleteSelectedPerson() {
 		
 		// Validation
-		if (_objSelectedPerson == null) {
-			_myMenu.displayMessagePrompt("You need to select a person first!", true);
+		if (!isPersonSelected()) { return; }
+		
+		// Process
+		if (isDeleteAPersonCofirmed()) {
+			// Remove the selected person from HashMap
+			_mapPerson.remove(_objSelectedPerson.getId());
+			_objSelectedPerson = null;
+			
+			// Update the Text File using HashMap
+			loadHashMapToFile();
 		} else {
-			if (isDeleteAPersonCofirmed()) {
-				// Remove the selected person from HashMap
-				_mapPerson.remove(_objSelectedPerson.getId());
-				_objSelectedPerson = null;
-				
-				// Update the Text File using HashMap
-				loadHashMapToFile();
-			} else {
-		    		// Display aborted process
-		    		_myMenu.displayMessagePrompt("You have aborted the DELETE operation!", true);	    		
+	    		// Display aborted process
+	    		_myMenu.displayMessagePrompt("You have aborted the DELETE operation!", true);	    		
 
-			}
 		}
+		
 	}
 	
-	private void displayFriend() {
+	/**
+	 * Add a Friend from the List 
+	 */
+	private static void addFriend() {
 		
-		// Local Variables
+		// Validation
+		if (!isPersonSelected()) { return; }
+		
+		// Local Variablesa
 		@SuppressWarnings("resource")
 		Scanner objScanner = new Scanner(System.in);
 		String strSelectedFriend = "";
 		
+		// Load Friends to 
+		// -------------------- begin
+		
+		// Read the file (Must be enclosed with try catch)
+		try {
+			objScanner = new Scanner(new FileReader(DATAPATH_FRIEND));
+			// Read the lines from Text File
+		    while (objScanner.hasNextLine()) {
+		    		// Get the line and convert it to array
+		        String[] columns = objScanner.nextLine().split(",");
+		        
+		        // Put the individual column value to variable
+		        String strPersonId = columns[0].trim();		
+		        String strFriendId = columns[1].trim();
+		        
+		        if (columns[0].trim().equals(_objSelectedPerson.getId())) {
+		        		_mySys.printIt(strPersonId + " " + strFriendId);	
+				}
+
+		        	// FIXME
+		        // Put Data to Hashmap
+//		        _mapPerson.put(strId, new Adult(strId, strName, strPhoto, strStatus, intAge));
+		    }
+		    
+		    _mySys.pressAnyKey();
+		    
+		    
+		} catch (FileNotFoundException e) {
+			// TODO Auto-generated catch block
+			e.printStackTrace();
+		}
+		
+	    // -------------------- end
+		
+		
 		// Display records from HashMap
-		displayHashMap("Select a person from the list", true);
+		displayHashMap("Add a friend from the list of person", true);
 		// Display Options
 		_myMenu.displayMenuOptions(_arrMenuOption_SelectPerson, MENU_WIDTH_BIG);
 		_myMenu.displaySeparator(MENU_WIDTH_BIG);
@@ -596,10 +640,11 @@ public class MiniNet {
         int intAge;
 		
 		try {
+
+			// --- Adult
 			
 			// Read the file (Must be enclosed with try catch)
 			objScanner = new Scanner(new FileReader(DATAPATH_ADULT));
-
 			// Read the lines from Text File
 		    while (objScanner.hasNextLine()) {
 		    		// Get the line and convert it to array
@@ -616,9 +661,10 @@ public class MiniNet {
 		        _mapPerson.put(strId, new Adult(strId, strName, strPhoto, strStatus, intAge));
 		    }
 		    
+		    // --- Dependent
+		    
 		    // Read the file (Must be enclosed with try catch)
  			objScanner = new Scanner(new FileReader(DATAPATH_DEPENDENT));
-
  			// Read the lines from Text File
  		    while (objScanner.hasNextLine()) {
  		    		// Get the line and convert it to array
@@ -735,6 +781,21 @@ public class MiniNet {
 	    
 	}
 
+	private static boolean isPersonSelected() {
+		
+		// Local Variables
+		boolean blnReturnValue = true;
+		
+		if (_objSelectedPerson == null) {
+			_myMenu.displayMessagePrompt("You need to select a person first!", true);
+			blnReturnValue = false;
+		}
+		
+		// Return value
+		return blnReturnValue;
+		
+	}
+	
 	/**
 	 * Confirm to save the person to text file
 	 */

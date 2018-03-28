@@ -9,10 +9,6 @@ public class Adult extends Person {
 		super(id, name, photo, status, age);
 	}
 	
-	public void parentTest() {
-		System.out.println("Parent Blah" + super.getId());
-	}
-	
 // ---------- Getters and Setters
 
 	public Person getSpouse() {

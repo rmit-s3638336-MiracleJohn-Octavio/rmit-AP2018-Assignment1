@@ -1,0 +1,4 @@
+D001, Mitch, Mitch.jpg, Student, 12
+D002, Mike, Mike.jpg, Student, 14
+D003, Jenny, Jenny.jpg, Student, 10
+D004, Cindy, Cindy.jpg, Baby, 2

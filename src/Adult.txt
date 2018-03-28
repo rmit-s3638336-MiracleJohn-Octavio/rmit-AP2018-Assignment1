@@ -1,2 +1,4 @@
-A006, John, John.jpg, Study, 23
-XYZ, Maricar, Maricar.jpg, Blah Blah, 26
+A003, Andrew E, Andrew E.jpg, Looking for jobs, 26
+A002, Elise, Elise.jpg, Working at McDonald, 24
+A004, Mariah, Mariah.jpg, Student at RMIT, 23
+A001, Mark, Mark.jpg, Working at KFC, 27
