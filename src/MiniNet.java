@@ -28,16 +28,7 @@ public class MiniNet {
 	private static Person _objSelectedPerson;
 	
 	// Array
-	static String _arrMenuOption_Main[]= {
-		"Selected Person: [  ]",
-		"~",
-		"[ 1 ] - List All",
-		"[ 2 ] - Add a Person",
-		"[ 3 ] - Select a Person",
-		"[ x ] - Select a Friend",
-		"~",
-		"[ 0 ] - Exit"	
-	};
+	static String _arrMenuOption_Main[];
 	static String _arrMenuOption_SelectPerson[]= {
 			"[ 0 ] - Back to Main"	
 		};
@@ -49,7 +40,8 @@ public class MiniNet {
 	// Constants
 	static final String DATAPATH_ADULT = "src/Adult.txt";
 	static final String DATAPATH_DEPENDENT = "src/Dependent.txt";
-	static final int MENU_WIDTH = 97;
+	static final int MENU_WIDTH_BIG = 97;
+	static final int MENU_WIDTH_SMALL = 55;
 	
 // ---------- Data
 	
@@ -95,6 +87,7 @@ public class MiniNet {
 		// Local Variables
 	    int intChoice;
 	    boolean blnIsExitLoop;
+	    String strSelectedPerson = "";
 	    
 	    // Load File to HashMap
 	    loadFileToHashMap();
@@ -105,18 +98,20 @@ public class MiniNet {
 		    	blnIsExitLoop  = false;	
 		    			    	
 		    	// Display the Main Menu
-		    	String strSelectedPerson = ""; 
+		    	strSelectedPerson = "";
 		    	if (_objSelectedPerson != null) {
-		    		strSelectedPerson = _objSelectedPerson.getId() + " - " + _objSelectedPerson.getName(); 
+		    		strSelectedPerson = 
+		    			_objSelectedPerson.getId() + " - " + 
+					_objSelectedPerson.getName(); 
 			}
-		    	
 		    	String arrMenuOption_Main[] = {
 		    		"Selected Person: [ " + strSelectedPerson + " ]",
 		    		"~",
-		    		"[ 1 ] - List All",
-		    		"[ 2 ] - Add a Person",
-		    		"[ 3 ] - Select a Person",
-		    		"[ x ] - Select a Friend",
+		    		"[ 1 ] - List all person",
+		    		"[ 2 ] - Add a person",
+		    		"[ 3 ] - Select a person",
+		    		"[ 4 ] - Display  profile",
+		    		"[ 5 ] - Delete selected person",
 		    		"~",
 		    		"[ 0 ] - Exit"	
 		    	};
@@ -134,8 +129,14 @@ public class MiniNet {
 		    		case 3:
 		    			selectPerson();
 		    			break;
+		    		case 4:
+		    			displayProfile();
+		    			break;
+		    		case 5:
+		    			deleteSelectedPerson();
+		    			break;
 		    		case 0:
-		    			if (isExitApp()) {
+		    			if (isExitCofirmed()) {
 			        		// Exit the Loop
 			        		blnIsExitLoop = true;
 			        	}
@@ -152,6 +153,9 @@ public class MiniNet {
 	    }
 	}
 	
+	/**
+	 * Display all person 
+	 */
 	private static void listAll() {
 		// Display records from HashMap
 		displayHashMap("List of all person", false);
@@ -173,7 +177,6 @@ public class MiniNet {
 		String strPhoto;
 		String strStatus;
 		int intAge;
-		String strType;
 		
 		// Screen
 		_myMenu.displayMenuHeader("Add a person");
@@ -215,22 +218,94 @@ public class MiniNet {
 		};
 	}
 
+	/**
+	 * Select a person from the List
+	 */
 	private static void selectPerson() {
 		
 		// Local Variables
+		@SuppressWarnings("resource")
 		Scanner objScanner = new Scanner(System.in);
-		String strUserInput
+		String strUserInput = "";
 		
 		// Display records from HashMap
 		displayHashMap("Select a person from the list", true);
 		// Display Options
-		_myMenu.displayMenuOptions(_arrMenuOption_SelectPerson, MENU_WIDTH);
-		_myMenu.displaySeparator(MENU_WIDTH);
+		_myMenu.displayMenuOptions(_arrMenuOption_SelectPerson, MENU_WIDTH_BIG);
+		_myMenu.displaySeparator(MENU_WIDTH_BIG);
  		
  		// Get User Input
 		_mySys.printIt("Type the Person Id of your choice and press <Enter>: ", false);
-		strId = objScanner.nextLine();		
- 		
+		strUserInput = objScanner.nextLine();	
+		
+		if (strUserInput == "0") {
+			// Do nothing.. Just Exit this method
+		} else {
+			// Locate the person from and list and put it on 
+			// the variable '_objSelectedPerson'
+			_objSelectedPerson = getPersonDetails(strUserInput);
+		}
+	}
+	
+	/**
+	 * Display the profile of the Person Selected
+	 */
+	private static void displayProfile() {
+		
+		// Local Variables
+		String arrMenuOption[];
+		
+		// Validation
+		if (_objSelectedPerson == null) {
+			_myMenu.displayMessagePrompt("You need to select a person first!", true);
+		} else {
+			if (_objSelectedPerson != null) {
+		    		arrMenuOption = (
+			    		"Id:     " + _objSelectedPerson.getId() + "," + 
+			    		"Name:   " + _objSelectedPerson.getName()+ "," +
+			    		"Photo:  " + _objSelectedPerson.getPhoto() + "," +
+			    		"Status: " + _objSelectedPerson.getStatus() + "," +
+			    		"Age:    " + _objSelectedPerson.getAge()).split(",");
+			} else {
+				arrMenuOption = (
+			    		"Id:     ," + 
+			    		"Name:   ," +
+			    		"Photo:  ," +
+			    		"Status: ," +
+			    		"Age:    ").split(",");
+			}
+		    	
+		    	// Display the Profile
+		    _myMenu.clearScreen();
+		    _myMenu.displayMenuHeader("Profile");
+		    _myMenu.displayMenuOptions(arrMenuOption, MENU_WIDTH_SMALL);
+		    _myMenu.displaySeparator();
+		    	
+		    	// Pause
+		    _mySys.pressAnyKey("Press <Enter> key to go back to Main Menu!");
+		}
+		
+	}
+	
+	private static void deleteSelectedPerson() {
+		
+		// Validation
+		if (_objSelectedPerson == null) {
+			_myMenu.displayMessagePrompt("You need to select a person first!", true);
+		} else {
+			if (isDeleteAPersonCofirmed()) {
+				// Remove the selected person from HashMap
+				_mapPerson.remove(_objSelectedPerson.getId());
+				_objSelectedPerson = null;
+				
+				// Update the Text File using HashMap
+				loadHashMapToFile();
+			} else {
+		    		// Display aborted process
+		    		_myMenu.displayMessagePrompt("You have aborted the DELETE operation!", true);	    		
+
+			}
+		}
 	}
 	
 	/**
@@ -238,7 +313,7 @@ public class MiniNet {
 	 * 
 	 * @return boolean
 	 */
-	private static boolean isExitApp() {
+	private static boolean isExitCofirmed() {
 		
 		// Local Variables
 		boolean blnReturnValue = false;
@@ -269,9 +344,66 @@ public class MiniNet {
 		return blnReturnValue;
 		
 	}
-
 	
+	/**
+	 * Confirmation to delete a person
+	 * 
+	 * @return boolean
+	 */
+	private static boolean isDeleteAPersonCofirmed() {
+		
+		// Local Variables
+		boolean blnReturnValue = false;
+		int intChoice;
+	    
+	    while (true) {
+	    	
+		    	// Display the Main Menu	 
+		    	intChoice = _myMenu.getMenuInput("Do you want to DELETE the selected person?", _arrMenuOption_YesNo);
+		    	
+		    	// Choices	    	
+		    	if (intChoice == 1) {
+		    		// If the user confirmed to delete the selected person
+		    		blnReturnValue = true;
+		    		break;
+		    	} else if (intChoice == 0) {
+		    		// If the user decided not to delete the selected person
+		    		blnReturnValue = false;
+		    		break;
+		    	} else {
+		    		// Display invalid key choice
+		    		_myMenu.displayMessagePrompt("You have selected an invalid choice!", true);	    		
+		    	}	    	
+	    }
+	    
+	    // Return the value
+		return blnReturnValue;
+		
+	}
+
 // ---------- Methods
+	
+	/**
+	 * Get the person details using the Person Id from the List
+	 * 
+	 * @param strPersonId
+	 * @return
+	 */
+	private static Person getPersonDetails(String strPersonId) {
+		// Local Variables		
+		Person objSelectedPerson = null;
+		
+		// Iterate thru HashMap - Locate the person using the Id
+		for (Map.Entry<String, Person> entry : _mapPerson.entrySet()) {
+			Person objPerson = entry.getValue();
+			if (objPerson.getId().equals(strPersonId)) {
+				objSelectedPerson = objPerson;
+			}
+		}
+		
+		// Return the value
+		return objSelectedPerson;
+	}
 	
 	/**
 	 * Load Data from Text File to Hashmap
@@ -324,9 +456,7 @@ public class MiniNet {
  		        // Put Data to Hashmap
  		        _mapPerson.put(strId, new Dependent(strId, strName, strPhoto, strStatus, intAge));
  		    }
- 		    
 		} catch (FileNotFoundException e) {
-			// TODO Auto-generated catch block
 			e.printStackTrace();
 		}
 	}
@@ -393,7 +523,7 @@ public class MiniNet {
 			}
 	    }
 		
-		// Write to File
+		// Write to File (Adult and Dependent)
 		_mySys.writeDataToFile(strDelimitedAdult, DATAPATH_ADULT);
 		_mySys.writeDataToFile(strDelimitedDependent, DATAPATH_DEPENDENT);
 	}
@@ -405,9 +535,9 @@ public class MiniNet {
 		
 		// Display Column Header		
 		_myMenu.clearScreen();
-		_myMenu.displaySeparator(MENU_WIDTH);
-		_mySys.printIt("| " + _myStr.padRight(strHeader,MENU_WIDTH-4) + " |");
-		_myMenu.displaySeparator(MENU_WIDTH);
+		_myMenu.displaySeparator(MENU_WIDTH_BIG);
+		_mySys.printIt("| " + _myStr.padRight(strHeader,MENU_WIDTH_BIG-4) + " |");
+		_myMenu.displaySeparator(MENU_WIDTH_BIG);
 		_mySys.printIt(
 				"| " + 
 				_myStr.padRight("Id",8) + "  " +
@@ -418,7 +548,7 @@ public class MiniNet {
 				_myStr.padRight("Type",10) + 
 				"  |"
 				);
-		_myMenu.displaySeparator(MENU_WIDTH);
+		_myMenu.displaySeparator(MENU_WIDTH_BIG);
 		
 		// Display the Hashmap (Sorted)
 	    Collection<Person> Person = _mapPerson.values();
@@ -449,7 +579,7 @@ public class MiniNet {
 	    				"  |"
 	    				);
 	    }
-	    _myMenu.displaySeparator(MENU_WIDTH);
+	    _myMenu.displaySeparator(MENU_WIDTH_BIG);
 	    
 	}
 
@@ -484,6 +614,7 @@ public class MiniNet {
 	    return blnReturnValue;
 	
 	}
+	
 }
 
 class comparatorPersonName implements Comparator<Person>{
