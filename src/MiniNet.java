@@ -1,6 +1,22 @@
 /**
  * @author miraclejohnoctaviojr
  *
+ * Disclaimer: Java is still new to me and I am still learning
+ * more about it. Somehow, I am trying to put functionalities
+ * as much as I could to make it efficient. The program specs
+ * looks simple but if I dig deeper, the whole process is huge
+ * especially if I consider some validations and error traps which
+ * would significantly consume my time. Hence, I will stick on
+ * the basic requirements to catch up with the deadline.  
+ *
+ * This simple program is using 2 data files named Adult.txt and 
+ * Dependent.txt which is created during "Add a person" operation.
+ * 
+ * Other methods used are placed on a separate Class named MyLibrary.
+ * Inside this class are INNER CLASS that categorized methods 
+ * according to its purpose such as MyMenu, MySystem, MyString etc.
+ * 
+ * 
  */
 
 import java.io.*;
@@ -24,7 +40,8 @@ public class MiniNet {
 	private static MyLibrary.MySystem _mySys = _myLib.new MySystem();
 	private static MyLibrary.MyString _myStr = _myLib.new MyString();
 	
-	private static Map<String, Person> _mapPerson = new HashMap<>();
+	private static Map<String, Person> _mapPerson = new HashMap<>();		// This will be loaded at startup using the default Data Text Files
+	private static Map<String, Person> _mapFriend = new HashMap<>(); 		// This will only loaded when user have selected a person	
 	private static Person _objSelectedPerson;
 	
 	// Array
@@ -77,7 +94,7 @@ public class MiniNet {
 	 * 
 	 */
 	
-// ---------- Main Menu	
+// ---------- Main Methods	
 	
 	/**
 	 * Main Method - This is where it all starts
@@ -113,6 +130,9 @@ public class MiniNet {
 		    		"[ 4 ] - Display profile",
 		    		"[ 5 ] - Update profile",
 		    		"[ 6 ] - Delete selected person",
+		    		"~",
+		    		"[ 7 ] - Add a friend",
+		    		"[ 8 ] - Add a parent",
 		    		"~",
 		    		"[ 0 ] - Exit"	
 		    	};
@@ -238,7 +258,7 @@ public class MiniNet {
 		// Local Variables
 		@SuppressWarnings("resource")
 		Scanner objScanner = new Scanner(System.in);
-		String strUserInput = "";
+		String strSelectedId = "";
 		
 		// Display records from HashMap
 		displayHashMap("Select a person from the list", true);
@@ -248,14 +268,14 @@ public class MiniNet {
  		
  		// Get User Input
 		_mySys.printIt("Type the Person Id of your choice and press <Enter>: ", false);
-		strUserInput = objScanner.nextLine();	
+		strSelectedId = objScanner.nextLine();	
 		
-		if (strUserInput == "0") {
+		if (strSelectedId == "0") {
 			// Do nothing.. Just Exit this method
 		} else {
 			// Locate the person from the list and put it on 
 			// the variable '_objSelectedPerson'
-			_objSelectedPerson = getPersonDetails(strUserInput);
+			_objSelectedPerson = getPersonDetails(strSelectedId);
 		}
 	}
 	
@@ -440,6 +460,32 @@ public class MiniNet {
 		}
 	}
 	
+	private void displayFriend() {
+		
+		// Local Variables
+		@SuppressWarnings("resource")
+		Scanner objScanner = new Scanner(System.in);
+		String strSelectedFriend = "";
+		
+		// Display records from HashMap
+		displayHashMap("Select a person from the list", true);
+		// Display Options
+		_myMenu.displayMenuOptions(_arrMenuOption_SelectPerson, MENU_WIDTH_BIG);
+		_myMenu.displaySeparator(MENU_WIDTH_BIG);
+		
+		// Get User Input
+		_mySys.printIt("Type the Person Id of your choice and press <Enter>: ", false);
+		strSelectedFriend = objScanner.nextLine();	
+		
+		if (strSelectedFriend == "0") {
+			// Do nothing.. Just Exit this method
+		} else {
+			// Locate the person from the list and put it on 
+			// the variable '_objSelectedPerson'
+			_objSelectedPerson = getPersonDetails(strSelectedFriend);
+		}
+	}
+	
 	/**
 	 * Confirmation to exit the program
 	 * 
@@ -513,8 +559,8 @@ public class MiniNet {
 		
 	}
 
-// ---------- Methods
-	
+// ---------- Sub Methods
+
 	/**
 	 * Get the person details using the Person Id from the List
 	 * 
@@ -592,7 +638,7 @@ public class MiniNet {
 			e.printStackTrace();
 		}
 	}
-	
+
 	/**
 	 * Load Data from Hashmap to Text File 
 	 */
@@ -600,32 +646,6 @@ public class MiniNet {
 		
 		String strDelimitedAdult = "";
 		String strDelimitedDependent = "";
-		
-		// Iterate thru HashMap
-		for (Map.Entry<String, Person> entry : _mapPerson.entrySet()) {
-			Person obj = entry.getValue();
-		    
-			// Store Data to Delimited String
-			if (obj.getAge() >= 16) {
-				strDelimitedAdult +=
-					(strDelimitedAdult == "" ? "" : "\n") +
-					obj.getId().trim() + ", " +
-	    				obj.getName().trim() + ", " +
-	    				obj.getPhoto().trim() + ", " +
-	    				obj.getStatus().trim() + ", " +
-	    				Integer.toString(obj.getAge()).trim();
-			} else {
-				strDelimitedDependent += 
-					(strDelimitedDependent == "" ? "" : "\n") +
-					obj.getId().trim() + ", " +
-	    				obj.getName().trim() + ", " +
-	    				obj.getPhoto().trim() + ", " +
-	    				obj.getStatus().trim() + ", " +
-	    				Integer.toString(obj.getAge()).trim();
-			}
-		}
-		
-		// ---
 		
 		// Display the Hashmap (Sorted)
 	    Collection<Person> Person = _mapPerson.values();
@@ -659,7 +679,7 @@ public class MiniNet {
 		_mySys.writeDataToFile(strDelimitedAdult, DATAPATH_ADULT);
 		_mySys.writeDataToFile(strDelimitedDependent, DATAPATH_DEPENDENT);
 	}
-	
+
 	/**
 	 * Display records from a HashMap
 	 */
